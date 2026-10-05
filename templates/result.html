@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Your coloring book</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+<script src="{{ url_for('static', filename='theme.js') }}"></script>
+</head>
+<body>
+<header><button type="button" id="theme-toggle" class="theme-toggle" aria-label="Toggle theme">🌙</button>
+<h1>🖍️ Coloring Book Maker</h1></header>
+<main>
+{% if error %}
+  <section class="card error"><h2>Something went wrong</h2><p>{{ error }}</p><a href="{{ url_for('index') }}">&larr; Back</a></section>
+{% else %}
+  <section class="card">
+    <h2>Your book is ready</h2>
+    <p>{{ result.image_count }} picture(s), {{ result.page_count }} paperback interior pages.</p>
+    <ul class="downloads">
+      {% for label, name in files.items() %}
+        <li><a href="{{ url_for('download', job=job, name=name) }}">{{ label }}</a>
+          {% if name.endswith('.pdf') or name.endswith('.jpg') %}
+            &middot; <a href="{{ url_for('download', job=job, name=name, inline=1) }}" target="_blank">preview</a>
+          {% endif %}
+          <small>{{ name }}</small></li>
+      {% endfor %}
+    </ul>
+    <p><a class="button" href="{{ url_for('download_zip', job=job) }}">Download everything (.zip)</a></p>
+  </section>
+  {% if result.warnings %}
+  <section class="card warn"><h2>Check before uploading to KDP</h2>
+    <ul>{% for w in result.warnings %}<li>{{ w }}</li>{% endfor %}</ul></section>
+  {% endif %}
+  <section class="card"><h2>Notes</h2><ul>{% for n in result.notes %}<li>{{ n }}</li>{% endfor %}</ul>
+    <p><a href="{{ url_for('index') }}">&larr; Make another book</a></p></section>
+{% endif %}
+</main>
+</body>
+</html>

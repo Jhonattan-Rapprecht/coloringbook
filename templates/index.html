@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Coloring Book Maker</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+<script src="{{ url_for('static', filename='theme.js') }}"></script>
+</head>
+<body>
+<header><button type="button" id="theme-toggle" class="theme-toggle" aria-label="Toggle theme">🌙</button>
+<h1>🖍️ Coloring Book Maker</h1>
+<p>Upload pictures &rarr; get a print-ready coloring book (KDP paperback, Kindle eBook and print-at-home PDF). Pictures are always fitted whole &mdash; never cropped.</p></header>
+<main>
+<form id="form" action="{{ url_for('build') }}" method="post" enctype="multipart/form-data">
+  <section class="card">
+    <h2>1. Pictures</h2>
+    <label id="drop" class="drop">
+      <input id="picker" type="file" name="images" accept="{{ accept }}" multiple>
+      <span>Drop images or PDFs here, or click to choose</span>
+    </label>
+    <p class="hint">Drag thumbnails to change page order. Click ★ to choose the cover picture.</p>
+    <ol id="thumbs" class="thumbs"></ol>
+  </section>
+
+  <section class="card grid">
+    <h2>2. Book details</h2>
+    <label>Title <input name="title" value="{{ defaults.title }}" required></label>
+    <label>Subtitle <input name="subtitle" placeholder="e.g. 50 Cute Unicorns for Kids Ages 4-8"></label>
+    <label>Author <input name="author"></label>
+    <label>Cover color <input type="color" name="cover_color" value="{{ defaults.cover_color }}"></label>
+    <input type="hidden" name="cover_image" id="cover_image" value="1">
+  </section>
+
+  <section class="card grid">
+    <h2>3. Print settings (Amazon KDP)</h2>
+    <label>Trim size
+      <select name="trim">{% for t in trims %}<option {% if t == defaults.trim %}selected{% endif %}>{{ t }}</option>{% endfor %}</select>
+    </label>
+    <label>Paper
+      <select name="paper"><option>white</option><option>cream</option></select>
+    </label>
+    <label>Margin (inches) <input type="number" name="margin" value="{{ defaults.margin }}" min="0.25" max="1.5" step="0.05"></label>
+    <label>Home printer paper
+      <select name="home_paper">{% for p in home_papers %}<option>{{ p }}</option>{% endfor %}</select>
+    </label>
+    <div class="checks">
+      <label><input type="checkbox" name="blank_backs" checked> Blank back on every picture (no marker bleed-through)</label>
+      <label><input type="checkbox" name="title_page" checked> Title page</label>
+      <label><input type="checkbox" name="belongs_to_page" checked> "This book belongs to" page</label>
+      <label><input type="checkbox" name="auto_rotate" checked> Rotate landscape pictures to fill the page</label>
+      <label><input type="checkbox" name="auto_trim" checked> Remove empty white borders</label>
+      <label><input type="checkbox" name="clean_lineart" checked> Clean up lines (pure white paper, crisp black)</label>
+      <label><input type="checkbox" name="upscale" checked> Upscale low-resolution pictures to 300 DPI</label>
+      <label><input type="checkbox" name="bleed"> Bleed (only for art that runs to the page edge)</label>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>4. Create</h2>
+    <div class="checks inline">
+      <label><input type="checkbox" name="make_cover" checked> Paperback cover</label>
+      <label><input type="checkbox" name="make_ebook" checked> Kindle eBook</label>
+      <label><input type="checkbox" name="make_home_print" checked> Print-at-home PDF</label>
+    </div>
+    <button id="go" type="submit">Build my coloring book</button>
+    <p id="status" class="hint"></p>
+  </section>
+</form>
+</main>
+<script>
+const picker = document.getElementById('picker');
+const drop = document.getElementById('drop');
+const thumbs = document.getElementById('thumbs');
+const coverInput = document.getElementById('cover_image');
+let items = [];   // {file, url}
+let coverItem = null;
+
+function addFiles(list) {
+  for (const file of list) items.push({file, url: file.type.startsWith('image/') ? URL.createObjectURL(file) : null});
+  if (!coverItem && items.length) coverItem = items[0];
+  render();
+}
+function render() {
+  thumbs.innerHTML = '';
+  items.forEach((it, i) => {
+    const li = document.createElement('li');
+    li.draggable = true;
+    li.dataset.index = i;
+    li.className = it === coverItem ? 'cover' : '';
+    li.innerHTML = (it.url ? `<img src="${it.url}" alt="">` : `<div class="pdf">PDF</div>`) +
+      `<span class="num">${i + 1}</span><button type="button" class="star" title="Use on cover">★</button>` +
+      `<button type="button" class="del" title="Remove">✕</button><small></small>`;
+    li.querySelector('small').textContent = it.file.name;
+    li.querySelector('.star').onclick = () => { coverItem = it; render(); };
+    li.querySelector('.del').onclick = () => { items.splice(i, 1); if (coverItem === it) coverItem = items[0] || null; render(); };
+    li.ondragstart = e => e.dataTransfer.setData('text/plain', i);
+    li.ondragover = e => e.preventDefault();
+    li.ondrop = e => {
+      e.preventDefault(); e.stopPropagation();
+      const raw = e.dataTransfer.getData('text/plain');
+      if (e.dataTransfer.files.length) { addFiles(e.dataTransfer.files); return; }
+      if (!/^\d+$/.test(raw)) return;
+      const from = +raw;
+      const [moved] = items.splice(from, 1);
+      items.splice(i, 0, moved);
+      render();
+    };
+    thumbs.appendChild(li);
+  });
+  coverInput.value = coverItem ? items.indexOf(coverItem) + 1 : 1;
+}
+picker.onchange = () => { addFiles(picker.files); picker.value = ''; };
+['dragover', 'dragenter'].forEach(ev => drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.add('over'); }));
+['dragleave', 'drop'].forEach(ev => drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.remove('over'); }));
+drop.addEventListener('drop', e => addFiles(e.dataTransfer.files));
+
+document.getElementById('form').onsubmit = async e => {
+  e.preventDefault();
+  if (!items.length) { alert('Please add at least one picture.'); return; }
+  const data = new FormData(e.target);
+  data.delete('images');
+  items.forEach(it => data.append('images', it.file, it.file.name));
+  const button = document.getElementById('go');
+  const status = document.getElementById('status');
+  button.disabled = true;
+  status.textContent = `Building ${items.length} picture(s)... this can take a minute.`;
+  try {
+    const resp = await fetch(e.target.action, {method: 'POST', body: data});
+    const html = await resp.text();
+    document.open(); document.write(html); document.close();
+  } catch (err) {
+    status.textContent = 'Upload failed: ' + err;
+    button.disabled = false;
+  }
+};
+</script>
+</body>
+</html>
