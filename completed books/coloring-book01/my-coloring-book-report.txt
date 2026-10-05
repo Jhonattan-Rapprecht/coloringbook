@@ -1,0 +1,35 @@
+COLORING BOOK BUILD REPORT
+==========================
+
+Pictures: 13
+Paperback interior pages: 30
+
+Files:
+  Paperback interior (KDP): my-coloring-book-interior.pdf
+  Paperback cover (KDP): my-coloring-book-cover.pdf
+  Kindle eBook (fixed-layout EPUB): my-coloring-book-kindle.epub
+  Kindle eBook cover (1600x2560 JPG): my-coloring-book-kindle-cover.jpg
+  Print at home (A4): my-coloring-book-print-at-home-a4.pdf
+  Build report: my-coloring-book-report.txt
+
+Notes:
+  - KDP setup: trim 8.5" x 11.0", no bleed, black & white interior, white paper. PDF page size 8.5" x 11.0".
+  - Margins: 0.5" outside/top/bottom, 0.5" inside (KDP gutter minimum 0.375").
+  - Every picture is on its own sheet (blank back) so markers don't bleed through.
+  - Cover: 17.318" x 11.250" incl. bleed, spine 0.068". Barcode area on the back cover kept free.
+  - No spine text (KDP only allows it from 79 pages).
+
+Warnings:
+  ! 'ChatGPT_Image_Oct_5_2026_07_41_54_PM-1' is low resolution (153 DPI at print size, upscaled to 300 DPI); lines may look soft. Use an image of at least 300 DPI at print size if you have one.
+  ! 'ChatGPT_Image_Oct_5_2026_07_42_07_PM-2' is low resolution (153 DPI at print size, upscaled to 300 DPI); lines may look soft. Use an image of at least 300 DPI at print size if you have one.
+  ! 'ChatGPT_Image_Oct_5_2026_07_42_14_PM-3' is low resolution (154 DPI at print size, upscaled to 300 DPI); lines may look soft. Use an image of at least 300 DPI at print size if you have one.
+  ! 'ChatGPT_Image_Oct_5_2026_07_42_19_PM-4' is low resolution (153 DPI at print size, upscaled to 300 DPI); lines may look soft. Use an image of at least 300 DPI at print size if you have one.
+  ! 'ChatGPT_Image_Oct_5_2026_07_42_21_PM-5' is low resolution (153 DPI at print size, upscaled to 300 DPI); lines may look soft. Use an image of at least 300 DPI at print size if you have one.
+  ! 'ChatGPT_Image_Oct_5_2026_07_42_23_PM-6' is low resolution (153 DPI at print size, upscaled to 300 DPI); lines may look soft. Use an image of at least 300 DPI at print size if you have one.
+  ! 'ChatGPT_Image_Oct_5_2026_07_42_25_PM-7' is low resolution (154 DPI at print size, upscaled to 300 DPI); lines may look soft. Use an image of at least 300 DPI at print size if you have one.
+  ! 'ChatGPT_Image_Oct_5_2026_07_42_27_PM-8' is low resolution (153 DPI at print size, upscaled to 300 DPI); lines may look soft. Use an image of at least 300 DPI at print size if you have one.
+  ! 'ChatGPT_Image_Oct_5_2026_07_42_30_PM-9' is low resolution (154 DPI at print size, upscaled to 300 DPI); lines may look soft. Use an image of at least 300 DPI at print size if you have one.
+  ! 'ChatGPT_Image_Oct_5_2026_07_42_32_PM-10' is low resolution (147 DPI at print size, upscaled to 300 DPI); lines may look soft. Use an image of at least 300 DPI at print size if you have one.
+  ! 'ChatGPT_Image_Oct_5_2026_07_42_33_PM-11' is low resolution (154 DPI at print size, upscaled to 300 DPI); lines may look soft. Use an image of at least 300 DPI at print size if you have one.
+  ! 'ChatGPT_Image_Oct_5_2026_07_42_36_PM-12' is low resolution (153 DPI at print size, upscaled to 300 DPI); lines may look soft. Use an image of at least 300 DPI at print size if you have one.
+  ! 'sketch-1' is low resolution (126 DPI at print size, upscaled to 300 DPI); lines may look soft. Use an image of at least 300 DPI at print size if you have one.
